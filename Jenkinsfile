@@ -25,6 +25,14 @@
                 """
             }
         }
+      stage('user_input'){
+          steps{
+              input("please approve the build")
+                 script{
+                    sh "echo this is gova"
+                   }
+                }
+              }
         stage("Deploy container in server"){
             steps{
             sshagent(['deploy_app']) {
