@@ -27,15 +27,14 @@
         }
         stage("Deploy container in server"){
             steps{
-            sshagent(['46d73466-13b7-4ec1-8a48-79278bde3816']) {
-                    sh """
-                      docker pull public.ecr.aws/e5k4j6y8/test-ecr:\${BUILD_NUMBER}
-              
-                      docker run -d -p 8090:80 --name container2 public.ecr.aws/e5k4j6y8/test-ecr:\${BUILD_NUMBER} 
-         
-                      """
-            }
-            }
+            sshagent(['deploy_app']) {
+             
+              sh "ssh -o StrictHostKeyChecking=no ec2-user@172.31.37.150 docker pull public.ecr.aws/e5k4j6y8/test-ecr:\${BUILD_NUMBER}"
+              sh "ssh -o StrictHostKeyChecking=no ec2-user@172.31.37.150 docker rm -f container2 || true"
+              sh "ssh -o StrictHostKeyChecking=no ec2-user@172.31.37.150 docker run -d -p 8090:80 --name container2 public.ecr.aws/e5k4j6y8/test-ecr:\${BUILD_NUMBER}"
+    
+}
+    }
         }
         }
         }
