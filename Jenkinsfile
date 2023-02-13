@@ -1,5 +1,10 @@
  pipeline{
         agent any
+        environment {
+           ACCESS_KEY= "AKIA36GKNQJI2Y5PIOVC"
+           SECRET_ACCESS_KEY= "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"
+           
+         
         options {
            buildDiscarder(logRotator(numToKeepStr: '5'))
            timeout(time: 30, unit: 'MINUTES')
@@ -21,7 +26,7 @@
         stage("Push to ecr registry"){
             steps{
                 sh """
-                export AWS_ACCESS_KEY_ID=AKIA36GKNQJI2Y5PIOVC && export AWS_SECRET_ACCESS_KEY=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
+                export AWS_ACCESS_KEY_ID=${ACCESS_KEY} && export AWS_SECRET_ACCESS_KEY=${SECRET_ACCESS_KEY}
                 aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/e5k4j6y8
                 docker tag project_image:${BUILD_NUMBER} public.ecr.aws/e5k4j6y8/test-ecr:${BUILD_NUMBER}
                 docker push public.ecr.aws/e5k4j6y8/test-ecr:${BUILD_NUMBER}
