@@ -57,4 +57,12 @@
           body: "Pipeline Build is over .. Build # is ..${env.BUILD_NUMBER}.",
           replyTo: 'govardhanr992@gmail.com'
  }
+          failure{
+ emailext to: 'govardhanr9922@gmail.com',
+          subject: "Pipeline Build is over .. Build # is ..${env.BUILD_NUMBER} .",
+          body: "Pipeline Build is over .. Build # is ..${env.BUILD_NUMBER} .",
+          replyTo: 'govardhanr992@gmail.com'
+ }
+ 
+}
         } // pipeline closing
