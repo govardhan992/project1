@@ -1,5 +1,8 @@
  pipeline{
         agent any
+        options {
+           buildDiscarder(logRotator(numToKeepStr: '5'))
+           timeout(time: 30, unit: 'MINUTES')
      stages{
         stage("Checkout"){
             steps{
@@ -29,7 +32,7 @@
           steps{
               input("please approve the build")
                  script{
-                    sh "echo this is gova"
+                    sh "echo this is a"
                    }
                 }
               }
@@ -44,5 +47,14 @@
 }
     }
         }
-        }
-        }
+        }   // stages closing
+         
+         post{
+
+ success{
+ emailext to: 'govardhanr992@gmail.com',
+          subject: "Pipeline Build is over .. Build # is ..${env.BUILD_NUMBER}.",
+          body: "Pipeline Build is over .. Build # is ..${env.BUILD_NUMBER}.",
+          replyTo: 'govardhanr992@gmail.com'
+ }
+        } // pipeline closing
