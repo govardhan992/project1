@@ -1,5 +1,5 @@
  pipeline{
-        agent any
+        agent { node { label "slave1" }}
         environment {
            ACCESS_KEY= "AKIA36GKNQJI2Y5PIOVC"
            SECRET_ACCESS_KEY= "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"
@@ -33,16 +33,22 @@
                 """
             }
         }
-      stage('user_input'){
-          steps{
-              input("please approve the build")
-                 script{
-                    sh "echo this is a"
-                   }
-                }
-              }
+      
         stage("Deploy container in server"){
             steps{
+             script {
+
+                 def USER_INPUT = input(
+                    message: 'User input required - Do you want to proceed?',
+                    parameters: [
+                            [$class: 'ChoiceParameterDefinition',
+                             choices: ['no','yes'].join('\n'),
+                             name: 'input',
+                             description: 'Menu - select box option']
+                    ])
+                    echo "The answer is: ${USER_INPUT}"
+                    if( "${USER_INPUT}" == "yes"){
+                     
             sshagent(['deploy_app']) {
              
               sh "ssh -o StrictHostKeyChecking=no ec2-user@172.31.37.150 docker pull public.ecr.aws/e5k4j6y8/test-ecr:\${BUILD_NUMBER}"
@@ -50,22 +56,27 @@
               sh "ssh -o StrictHostKeyChecking=no ec2-user@172.31.37.150 docker run -d -p 8090:80 --name container2 public.ecr.aws/e5k4j6y8/test-ecr:\${BUILD_NUMBER}"
     
 }
-    }
+    }  else {
+                   echo "Skipping deployment"
         }
+             }
+            }
+        }
+      
         }   // stages closing
          
          post{
 
  success{
  emailext to: 'govardhanr992@gmail.com',
-          subject: "Pipeline Build is over .. Build # is ..${env.BUILD_NUMBER}.",
-          body: "Pipeline Build is over .. Build # is ..${env.BUILD_NUMBER}.",
+          subject: "Pipeline Build is over .. Build # is ..${env.BUILD_NUMBER} and Build status is.. ${currentBuild.result}.",
+          body: "Pipeline Build is over .. Build # is ..${env.BUILD_NUMBER} and Build status is.. ${currentBuild.result}.",
           replyTo: 'govardhanr992@gmail.com'
  }
           failure{
  emailext to: 'govardhanr9922@gmail.com',
-          subject: "Pipeline Build is over .. Build # is ..${env.BUILD_NUMBER} .",
-          body: "Pipeline Build is over .. Build # is ..${env.BUILD_NUMBER} .",
+          subject: "Pipeline Build is over .. Build # is ..${env.BUILD_NUMBER} and Build status is.. ${currentBuild.result}.",
+          body: "Pipeline Build is over .. Build # is ..${env.BUILD_NUMBER} and Build status is.. ${currentBuild.result}.",
           replyTo: 'govardhanr992@gmail.com'
  }
  
