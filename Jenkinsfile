@@ -79,6 +79,9 @@
           body: "Pipeline Build is over .. Build # is ..${env.BUILD_NUMBER} and Build status is.. ${currentBuild.result}.",
           replyTo: 'govardhanr992@gmail.com'
  }
+  always {
+          cleanWs()
+          }
  
 }
         } // pipeline closing
