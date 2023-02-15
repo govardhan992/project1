@@ -83,6 +83,8 @@
   always {
           cleanWs()
           }
+  unstable {
+       echo 'I will only get executed if this is unstable'
  
 }
         } // pipeline closing
