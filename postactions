@@ -1,0 +1,33 @@
+pipeline {
+  agent any
+    options{
+      timestamps()
+  }
+        stages {
+          stage("hello_world") {
+              steps{
+                  echo "hello_world"
+                  }
+                post{
+                  always{
+                     echo " Runs always, wont depend upon the build result "
+                        }
+                   aborted{
+                       echo " this action excuted if the current status is aborted"
+                          }
+                    failure{
+                        echo "Runs only if the current build status is failed"
+                            }
+                    success{
+                          echo "Runs only if the current build is success"
+                           }
+                    unstable{
+                          echo " Runs only if the current build is unstable"
+                            }
+                     cleanup{
+                          echo " will execute at every time in the last , it is using to cleanup folder or workspace"
+                            }
+                        }
+                    }
+              }
+          }
